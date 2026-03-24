@@ -1,5 +1,20 @@
 import { useState } from 'react'
 
+
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
+
+
+const StatisticsLine = (props) => {
+  console.log(props)
+  return (
+    <>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </>
+  )
+}
+
+
 const Statistics = (props) => {
   console.log(props)
   if (props.x + props.y + props.z === 0) {
@@ -11,29 +26,31 @@ const Statistics = (props) => {
   }
 
   return (
-    <div>
-      <StatisticsLine text="good" value={props.x} />
-      <StatisticsLine text="neutral" value={props.y} />
-      <StatisticsLine text="bad" value={props.z} />
-      <StatisticsLine text="all" value={props.x + props.y + props.z} />
-      <StatisticsLine text="average" value={(props.x * 1 + props.z * -1) / (props.x + props.y + props.z)} />
-      <StatisticsLine text="positive" value={props.x * 100 / (props.x + props.y + props.z) + ' %'} />
-    </div>
+    <table>
+      <tbody>
+        <tr>
+          <StatisticsLine text="good" value={props.x} />
+        </tr>
+        <tr>
+          <StatisticsLine text="neutral" value={props.y} />
+        </tr>
+        <tr>
+          <StatisticsLine text="bad" value={props.z} />
+        </tr>
+        <tr>
+          <StatisticsLine text="all" value={props.x + props.y + props.z} />
+        </tr>
+        <tr>
+          <StatisticsLine text="average" value={(props.x * 1 + props.z * -1) / (props.x + props.y + props.z)} />
+        </tr>
+        <tr>
+          <StatisticsLine text="positive" value={props.x * 100 / (props.x + props.y + props.z) + ' %'} />
+        </tr>
+      </tbody>
+    </table>
   )
 }
 
-const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
-
-const StatisticsLine = (props) => {
-  console.log(props)
-  return (
-    <div>
-      <p>
-        {props.text} {props.value}
-      </p>
-    </div>
-  )
-}
 
 const App = () => {
   // tallenna napit omaan tilaansa
