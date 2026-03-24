@@ -31,7 +31,10 @@ const App = () => {
     <h1>statistics</h1>
     <p>good {good}<br />
     neutral {neutral}<br />
-    bad {bad}</p>
+    bad {bad}<br />
+    all {good + neutral + bad}<br />
+    average {((good * 1) + (bad * -1)) / (good + neutral + bad)}<br />
+    positive {good * 100 / (good + neutral + bad) + ' %'}</p>
     </div>
   )
 }
