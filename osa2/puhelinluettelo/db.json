@@ -34,7 +34,16 @@
       "name": "Spungus Tabas",
       "number": "0-4",
       "id": "kiZP1xyvpis"
+    },
+    {
+      "name": "Ningus Bunugus",
+      "number": "12512879102",
+      "id": "iDOml9OmDaQ"
+    },
+    {
+      "name": "Burg Bun",
+      "number": "124215",
+      "id": "trOQOUgzo5Q"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }
