@@ -58,6 +58,16 @@ const App = () => {
     setShowAll(event.target.value)
   }
 
+  const handleDelete = (id) => {
+    if (window.confirm("Delete " + persons.find(person => person.id === id).name + " ?")) {
+      noteService
+        .deleteOne(id)
+        .then(response => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
+
   function persFilter(person) {
     return person.name.toLowerCase().includes(showAll.toLowerCase())
   }
@@ -74,8 +84,8 @@ const App = () => {
       <h1>add a new</h1>
       <Form addNumber={addNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h1>Numbers</h1>
-      <Persons persons={notesToShow}/>
-    
+      <Persons persons={notesToShow} handleDelete={handleDelete}/>
+
     </div>
   )
 
