@@ -3,7 +3,8 @@ import Filter from './components/Filter.jsx'
 import Form from './components/Form.jsx'
 import Persons from './components/Persons.jsx'
 import noteService from './services/notes'
-import Notification from './components/Notification'
+import NotificationS from './components/NotificationS'
+import NotificationE from './components/NotificationE'
 import Footer from './components/Footer'
 
 
@@ -27,6 +28,7 @@ const App = () => {
   Sen voisi korvata 'useState(null)' jotta viesti ei näkyisi alussa 
   */
   const [addMessage, setAddMessage] = useState('Greetings!')
+  const [errorMessage, setErrorMessage] = useState(null)  
 
   const addNumber = (event) => {
     event.preventDefault()
@@ -49,8 +51,18 @@ const App = () => {
             setTimeout(() => {
             setAddMessage(null)
             }, 5000)
-          }
-          )
+          })
+          .catch(error => {
+            setErrorMessage(
+              `Information of ${newName} has already been removed from server`
+            )
+            setTimeout(() => {
+            setErrorMessage(null)
+            }, 5000)
+            setPersons(persons.filter(person => person.id !== nF.id))
+            setNewName('')
+            setNewNumber('')
+          })
       }
     }
     else {
@@ -78,6 +90,7 @@ const App = () => {
   const handleNumberChange = (event) => {
     console.log(event.target.value)
     setNewNumber(event.target.value)
+
   }
 
   const handleShowAllChange = (event) => {
@@ -98,7 +111,17 @@ const App = () => {
             setAddMessage(null)
           }, 5000)
         })
-        
+        .catch(error => {
+          setErrorMessage(
+            `Information of ${persons.find(person => person.id === id).name} has already been removed from server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+          setPersons(persons.filter(person => person.id !== id))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
 
@@ -115,7 +138,8 @@ const App = () => {
       
       <h1>Phonebook</h1>
       <Filter showAll={showAll} handleShowAllChange={handleShowAllChange}/>
-      <Notification message={addMessage} />
+      <NotificationS message={addMessage} />
+      <NotificationE message={errorMessage} />
       <h1>add a new</h1>
       <Form addNumber={addNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h1>Numbers</h1>
