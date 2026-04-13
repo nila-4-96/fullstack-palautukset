@@ -18,10 +18,17 @@ const App = () => {
   }, [])
 
   const handleChange = (event) => {
+    console.log(event.target.value)
     setCountry(event.target.value)
+  }
+  
+  const handleShow = (event) => {
+    console.log(event.name.common)
+    setCountry(event.name.common)
   }
 
   const onSearch = (event) => {
+    console.log(event.target.value)
     event.preventDefault()
     setCountry(country)
   }
@@ -34,13 +41,11 @@ const App = () => {
     ? countries
     : countries.filter(countFilter)
 
-
   return (
     <div>
     <Filter showAll={country} handleShowAllChange={handleChange}/>
-    <Countries countries={countriesToShow} />
+    <Countries countries={countriesToShow} handleShow={handleShow} />
     </div>
-
   )
 }
 
