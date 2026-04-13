@@ -7,6 +7,7 @@ import Countries from './components/Countries'
 const App = () => {
   const [country, setCountry] = useState('')
   const [countries, setCountries] = useState([])
+  const api_key = import.meta.env.VITE_SOME_KEY
 
   useEffect(() => {
     console.log('effect run, country is now', country)
