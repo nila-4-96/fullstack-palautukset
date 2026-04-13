@@ -3,6 +3,8 @@ import Filter from './components/Filter.jsx'
 import Form from './components/Form.jsx'
 import Persons from './components/Persons.jsx'
 import noteService from './services/notes'
+import Notification from './components/Notification'
+import Footer from './components/Footer'
 
 
 const App = () => {
@@ -21,6 +23,10 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState('')
+  /* Tarkoituksella, tervehdys pysyy kunnes käyttäjä tekee jotain
+  Sen voisi korvata 'useState(null)' jotta viesti ei näkyisi alussa 
+  */
+  const [addMessage, setAddMessage] = useState('Greetings!')
 
   const addNumber = (event) => {
     event.preventDefault()
@@ -37,6 +43,12 @@ const App = () => {
             setPersons(persons.map(person => person.id !== nF.id ? person : response.data))
             setNewName('')
             setNewNumber('')
+            setAddMessage(
+              `Changed ${newName}`
+            )
+            setTimeout(() => {
+            setAddMessage(null)
+            }, 5000)
           }
           )
       }
@@ -48,6 +60,12 @@ const App = () => {
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNumber('')
+          setAddMessage(
+            `Added ${newName}`
+          )
+          setTimeout(() => {
+            setAddMessage(null)
+          }, 5000)
         })
     }
   }
@@ -73,7 +91,14 @@ const App = () => {
         .deleteOne(id)
         .then(response => {
           setPersons(persons.filter(person => person.id !== id))
+          setAddMessage(
+            `Deleted ${persons.find(person => person.id === id).name}`
+          )
+          setTimeout(() => {
+            setAddMessage(null)
+          }, 5000)
         })
+        
     }
   }
 
@@ -90,6 +115,7 @@ const App = () => {
       
       <h1>Phonebook</h1>
       <Filter showAll={showAll} handleShowAllChange={handleShowAllChange}/>
+      <Notification message={addMessage} />
       <h1>add a new</h1>
       <Form addNumber={addNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h1>Numbers</h1>
