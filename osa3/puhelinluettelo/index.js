@@ -25,8 +25,6 @@ let notes = [
   }
 ]
 
-
-
 app.use(express.json())
 
 app.get('/api/persons', (request, response) => {
@@ -56,6 +54,31 @@ app.delete('/api/persons/:id', (request, response) => {
   notes = notes.filter(note => note.id !== id)
 
   response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  const newID = notes.length > 0
+    ? Math.floor(Math.random() * 1000000)
+    : "0"
+
+  const person = request.body
+  person.id = String(newID)
+
+  if (!person.name || !person.number) {
+    return response.status(400).json({
+      error: 'name or number is missing'
+    })
+  }
+
+  if (notes.find(note => note.name === person.name)) {
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
+  notes = notes.concat(person)
+  
+  response.json(person)
 })
 
 const PORT = 3001
