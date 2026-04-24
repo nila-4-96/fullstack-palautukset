@@ -21,55 +21,44 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const note = notes.find(note => note.id === id)
-
-  if (note) {
+  Note.findById(request.params.id).then(note => {
     response.json(note)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
+/*
 app.get('/info', (request, response) => {
   response.send(
     `<p>Phonebook has info for ${notes.length} people</p>
     <p>${new Date()}</p>`
   )
 })
+*/
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  notes = notes.filter(note => note.id !== id)
-
-  response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+  Note.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
-  const newID = notes.length > 0
-    ? Math.floor(Math.random() * 1000000)
-    : "0"
+  const body = request.body
 
-  const person = request.body
-  person.id = String(newID)
-
-  if (!person.name || !person.number) {
-    return response.status(400).json({
-      error: 'name or number is missing'
-    })
+  if (!body.name || !body.number) {
+    return response.status(400).json({ error: 'name or number missing' })
   }
 
-  if (notes.find(note => note.name === person.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
+  const person = new Note({
+    name: body.name,
+    number: body.number
+  })
 
-  notes = notes.concat(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 
-  morgan.token('person', function (req, res) { return JSON.stringify(person) })
-
-  response.json(person)
 })
 
 const PORT = process.env.PORT
