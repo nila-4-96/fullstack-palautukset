@@ -11,5 +11,5 @@ Content-Type: application/json
 
 {
   "name": "Area 51",
-  "number": "13-22024"
+  "number": "1322-22024"
 }
