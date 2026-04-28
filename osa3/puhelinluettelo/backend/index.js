@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
-const Note = require('./models/note')
+const Person = require('./models/note')
 
 app.use(express.static('dist'))
 app.use(express.json())
@@ -16,16 +16,16 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :i
 
 // ______
 app.get('/api/persons', (request, response) => {
-  Note.find({}).then(notes => {
-    response.json(notes)
+  Person.find({}).then(persons => {
+    response.json(persons)
   })
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-  Note.findById(request.params.id)
-    .then(note => {
-      if (note) {
-        response.json(note)
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
       } else {
         response.status(404).end()
       }
@@ -35,9 +35,9 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 
 app.get('/info', (request, response) => {
-  Note.find({}).then(notes => {
+  Person.find({}).then(persons => {
     response.send(
-      `<p>Phonebook has info for ${notes.length} people</p>
+      `<p>Phonebook has info for ${persons.length} people</p>
       <p>${new Date()}</p>`
     )
   })
@@ -45,45 +45,47 @@ app.get('/info', (request, response) => {
 
 
 app.delete('/api/persons/:id', (request, response, next) => {
-  Note.findByIdAndDelete(request.params.id)
+  Person.findByIdAndDelete(request.params.id)
     .then(result => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
     return response.status(400).json({ error: 'name or number missing' })
   }
 
-  const person = new Note({
+  const person = new Person({
     name: body.name,
     number: body.number
   })
 
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
   })
+    .catch(error => next(error))
 })
 
 
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
-  Note.findById(request.params.id)
-    .then(note => {
-      if (!note) {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (!person) {
         return response.status(404).end()
       }
 
-      note.name = body.name
-      note.number = body.number
+      person.name = body.name
+      person.number = body.number
 
-      return note.save().then(updatedNote => {
-        response.json(updatedNote)
+      return person.save().then(updatedPerson => {
+        response.json(updatedPerson)
       })
     })
     .catch(error => next(error))
@@ -98,9 +100,13 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
+  
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
+
   next(error)
 }
 app.use(errorHandler)
