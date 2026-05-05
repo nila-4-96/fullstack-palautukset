@@ -21,8 +21,8 @@ mongoose
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-app.use('/api/persons', notesRouter)
-app.use(express.static('dist'))
+app.use('/api/blogs', notesRouter)
+// app.use(express.static('dist'))
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
