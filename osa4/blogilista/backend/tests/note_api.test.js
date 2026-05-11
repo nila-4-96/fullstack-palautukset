@@ -14,7 +14,7 @@ beforeEach(async () => {
 })
 
 test('blogs are returned as json', async () => {
-  console.log('entered test')
+  // console.log('entered test')
   await api
     .get('/api/blogs')
     .expect(200)
@@ -23,24 +23,21 @@ test('blogs are returned as json', async () => {
 
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
-  console.log('Response body:', response.body)
+  // console.log('Response body:', response.body)
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
-  console.log('response.body.length:', response.body.length)
-  console.log('helper.initialBlogs.length:', helper.initialBlogs.length)
+  // console.log('response.body.length:', response.body.length)
+  // console.log('helper.initialBlogs.length:', helper.initialBlogs.length)
 })
 
 test('blog id field is called id', async () => {
   const response = await api.get('/api/blogs')
 
-  console.log(
+  /*console.log(
     'Object.keys(response.body[0]):',
     Object.keys(response.body[0]),
-  )
-  assert(Object.keys(response.body[0]).includes('id'))
-})
+  )*/
 
-after(async () => {
-  await mongoose.connection.close()
+  assert(Object.keys(response.body[0]).includes('id'))
 })
 
 test('blog can be added using POST', async () => {
@@ -60,17 +57,38 @@ test('blog can be added using POST', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
+  /*
   console.log('blogsAtEnd', blogsAtEnd)
-
   console.log('blogsAtEnd.length:', blogsAtEnd.length)
   console.log('helper.initialBlogs.length + 1:', helper.initialBlogs.length + 1)
+  */
 
   const contents = blogsAtEnd.map(n => n.title)
   assert(contents.includes('One more indie site'))
 })
 
+test('blog with undefined likes gets default value 0', async () => {
+  const postBlog = {
+    title: 'Yet another indie site',
+    author: 'Pim',
+    url: 'https://www.merriam-webster.com/'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(postBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual((blogsAtEnd.find(blog => blog.title === 'Yet another indie site').likes), 0)
+})
 
 
+
+after(async () => {
+  await mongoose.connection.close()
+})
 
 
 /*
