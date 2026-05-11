@@ -8,6 +8,10 @@ const Blog = require('../models/note')
 
 const api = supertest(app)
 
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
+})
 
 test('blogs are returned as json', async () => {
   console.log('entered test')
@@ -39,8 +43,31 @@ after(async () => {
   await mongoose.connection.close()
 })
 
+test('blog can be added using POST', async () => {
+  const postBlog = {
+    title: 'One more indie site',
+    author: 'Pim',
+    url: 'https://www.youtube.com',
+    likes: 2
+  }
 
+  await api
+    .post('/api/blogs')
+    .send(postBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
 
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+  console.log('blogsAtEnd', blogsAtEnd)
+
+  console.log('blogsAtEnd.length:', blogsAtEnd.length)
+  console.log('helper.initialBlogs.length + 1:', helper.initialBlogs.length + 1)
+
+  const contents = blogsAtEnd.map(n => n.title)
+  assert(contents.includes('One more indie site'))
+})
 
 
 

@@ -19,8 +19,10 @@ notesRouter.post('/', async (request, response) => {
   const body = request.body
 
   const blog = new Blog({
-    content: body.content,
-    important: body.important || false,
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
   })
 
   const savedBlog = await blog.save()
