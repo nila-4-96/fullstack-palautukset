@@ -25,6 +25,16 @@ test('all blogs are returned', async () => {
   console.log('helper.initialBlogs.length:', helper.initialBlogs.length)
 })
 
+test('blog id field is called id', async () => {
+  const response = await api.get('/api/blogs')
+
+  console.log(
+    'Object.keys(response.body[0]):',
+    Object.keys(response.body[0]),
+  )
+  assert(Object.keys(response.body[0]).includes('id'))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
