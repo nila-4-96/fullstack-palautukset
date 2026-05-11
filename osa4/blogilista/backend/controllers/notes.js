@@ -29,6 +29,10 @@ notesRouter.post('/', async (request, response) => {
     blog.likes = 0
   }
 
+  if (body.title === undefined || body.url === undefined) {
+    return response.status(400).end()
+  }
+
   const savedBlog = await blog.save()
   response.status(201).json(savedBlog)
 })

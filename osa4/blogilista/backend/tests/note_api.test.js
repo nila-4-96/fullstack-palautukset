@@ -84,7 +84,37 @@ test('blog with undefined likes gets default value 0', async () => {
   assert.strictEqual((blogsAtEnd.find(blog => blog.title === 'Yet another indie site').likes), 0)
 })
 
+test('blog without a title returns 400', async () => {
+  const postBlog = {
+    author: 'Pim',
+    url: 'https://www.merriam-webster.com/',
+    likes: 3
+  }
 
+  await api
+    .post('/api/blogs')
+    .send(postBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+})
+
+test('blog without a url returns 400', async () => {
+  const postBlog = {
+    title: 'Yet another indie site',
+    author: 'Pim',
+    likes: 3
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(postBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+})
 
 after(async () => {
   await mongoose.connection.close()
