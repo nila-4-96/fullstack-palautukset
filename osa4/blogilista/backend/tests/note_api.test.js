@@ -65,10 +65,10 @@ describe('blog addition & editing', () => {
     const blogToUpdate = blogsAtStart[0]
 
     const updatedBlog = {
-      title: 'Not an indie site',
+      title: blogToUpdate.title,
       author: blogToUpdate.author,
       url: blogToUpdate.url,
-      likes: blogToUpdate.likes,
+      likes: blogToUpdate.likes + 1,
       id: blogToUpdate.id
     }
 
