@@ -1,4 +1,5 @@
 const notesRouter = require('express').Router()
+// const { update } = require('lodash')
 const Blog = require('../models/note')
 
 notesRouter.get('/', async (request, response) => {
@@ -41,5 +42,24 @@ notesRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
+
+notesRouter.put('/:id', async (request, response) => {
+  const body = request.body
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog) {
+    blog.title = body.title
+    blog.author = body.author
+    blog.url = body.url
+    blog.likes = body.likes
+
+    const updatedBlog = await blog.save()
+    response.json(updatedBlog)
+
+  } else {
+    return response.status(404).end()
+  }
+})
+
 
 module.exports = notesRouter
