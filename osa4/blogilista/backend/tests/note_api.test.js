@@ -1,5 +1,5 @@
 const assert = require('node:assert')
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -13,107 +13,131 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-test('blogs are returned as json', async () => {
-  // console.log('entered test')
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('when there is initially some blogs saved', () => {
+
+  test('blogs are returned as json', async () => {
+    // console.log('entered test')
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+    // console.log('Response body:', response.body)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    // console.log('response.body.length:', response.body.length)
+    // console.log('helper.initialBlogs.length:', helper.initialBlogs.length)
+  })
 })
 
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
-  // console.log('Response body:', response.body)
-  assert.strictEqual(response.body.length, helper.initialBlogs.length)
-  // console.log('response.body.length:', response.body.length)
-  // console.log('helper.initialBlogs.length:', helper.initialBlogs.length)
+describe('blog addition', () => {
+  test('blog can be added using POST', async () => {
+    const postBlog = {
+      title: 'One more indie site',
+      author: 'Pim',
+      url: 'https://www.youtube.com',
+      likes: 2
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(postBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+    /*
+    console.log('blogsAtEnd', blogsAtEnd)
+    console.log('blogsAtEnd.length:', blogsAtEnd.length)
+    console.log('helper.initialBlogs.length + 1:', helper.initialBlogs.length + 1)
+    */
+
+    const contents = blogsAtEnd.map(n => n.title)
+    assert(contents.includes('One more indie site'))
+  })
 })
 
-test('blog id field is called id', async () => {
-  const response = await api.get('/api/blogs')
 
-  /*console.log(
-    'Object.keys(response.body[0]):',
-    Object.keys(response.body[0]),
-  )*/
+describe('blog error handling', () => {
+  test('blog id field is called id', async () => {
+    const response = await api.get('/api/blogs')
 
-  assert(Object.keys(response.body[0]).includes('id'))
+    /*console.log(
+      'Object.keys(response.body[0]):',
+      Object.keys(response.body[0]),
+    )*/
+
+    assert(Object.keys(response.body[0]).includes('id'))
+  })
+
+
+  test('blog with undefined likes gets default value 0', async () => {
+    const postBlog = {
+      title: 'Yet another indie site',
+      author: 'Pim',
+      url: 'https://www.merriam-webster.com/'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(postBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual((blogsAtEnd.find(blog => blog.title === 'Yet another indie site').likes), 0)
+  })
+
+  test('blog without a title returns 400', async () => {
+    const postBlog = {
+      author: 'Pim',
+      url: 'https://www.merriam-webster.com/',
+      likes: 3
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(postBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
+  test('blog without a url returns 400', async () => {
+    const postBlog = {
+      title: 'Yet another indie site',
+      author: 'Pim',
+      likes: 3
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(postBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
 })
 
-test('blog can be added using POST', async () => {
-  const postBlog = {
-    title: 'One more indie site',
-    author: 'Pim',
-    url: 'https://www.youtube.com',
-    likes: 2
-  }
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
 
-  await api
-    .post('/api/blogs')
-    .send(postBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    const blogsAtEnd = await helper.blogsInDb()
 
-  /*
-  console.log('blogsAtEnd', blogsAtEnd)
-  console.log('blogsAtEnd.length:', blogsAtEnd.length)
-  console.log('helper.initialBlogs.length + 1:', helper.initialBlogs.length + 1)
-  */
-
-  const contents = blogsAtEnd.map(n => n.title)
-  assert(contents.includes('One more indie site'))
-})
-
-test('blog with undefined likes gets default value 0', async () => {
-  const postBlog = {
-    title: 'Yet another indie site',
-    author: 'Pim',
-    url: 'https://www.merriam-webster.com/'
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(postBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-
-  const blogsAtEnd = await helper.blogsInDb()
-  assert.strictEqual((blogsAtEnd.find(blog => blog.title === 'Yet another indie site').likes), 0)
-})
-
-test('blog without a title returns 400', async () => {
-  const postBlog = {
-    author: 'Pim',
-    url: 'https://www.merriam-webster.com/',
-    likes: 3
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(postBlog)
-    .expect(400)
-
-  const blogsAtEnd = await helper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
-})
-
-test('blog without a url returns 400', async () => {
-  const postBlog = {
-    title: 'Yet another indie site',
-    author: 'Pim',
-    likes: 3
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(postBlog)
-    .expect(400)
-
-  const blogsAtEnd = await helper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    const ids = blogsAtEnd.map(n => n.id)
+    assert(!ids.includes(blogToDelete.id))
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  })
 })
 
 after(async () => {
