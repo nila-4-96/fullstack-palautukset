@@ -4,8 +4,13 @@ const noteSchema = new mongoose.Schema({
   title: String,
   author: String,
   url: String,
-  likes: Number
+  likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
+
 
 noteSchema.set('toJSON', {
   transform: (document, returnedObject) => {
@@ -14,5 +19,6 @@ noteSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
 
 module.exports = mongoose.model('Blog', noteSchema)

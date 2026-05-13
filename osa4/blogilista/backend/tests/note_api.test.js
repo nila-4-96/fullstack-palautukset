@@ -1,17 +1,41 @@
 const assert = require('node:assert')
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, before, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
+const bcrypt = require('bcrypt')
 const Blog = require('../models/note')
+const User = require('../models/user')
 
 const api = supertest(app)
+
+let token
+
+before(async () => {
+  await User.deleteMany({})
+  await api
+    .post('/api/users')
+    .send({
+      username: 'bungley',
+      name: 'Bungley',
+      password: 'wrong'
+    })
+  const response = await api
+    .post('/api/login')
+    .send({
+      username: 'bungley',
+      password: 'wrong'
+    })
+  token = response.body.token
+  console.log('token:', token)
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
 })
+
 
 describe('when there is initially some blogs saved', () => {
 
@@ -44,6 +68,7 @@ describe('blog addition & editing', () => {
     await api
       .post('/api/blogs')
       .send(postBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -75,6 +100,7 @@ describe('blog addition & editing', () => {
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
       .send(updatedBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -112,6 +138,7 @@ describe('blog error handling', () => {
     await api
       .post('/api/blogs')
       .send(postBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -129,6 +156,7 @@ describe('blog error handling', () => {
     await api
       .post('/api/blogs')
       .send(postBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -145,6 +173,7 @@ describe('blog error handling', () => {
     await api
       .post('/api/blogs')
       .send(postBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -164,6 +193,63 @@ describe('deletion of a blog', () => {
     const ids = blogsAtEnd.map(n => n.id)
     assert(!ids.includes(blogToDelete.id))
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  })
+})
+
+
+describe('when there is initially one user at db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'mluukkai',
+      name: 'Matti Luukkainen',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))
+  })
+
+  test('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('expected `username` to be unique'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 })
 
