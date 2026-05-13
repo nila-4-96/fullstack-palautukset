@@ -21,7 +21,7 @@ Content-Type: application/json
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3OGVjNDQ5MzBkNWNlMWVjZjA3NiIsImlhdCI6MTc3ODY3Nzk5NywiZXhwIjoxNzc4NzY0Mzk3fQ.vLy0KPRPtyE7XzelCJ7Lc-1q_tCxjfCLEjJgBal4x3Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3YzM5YmE5ZjY4Mzg3YzIwM2VkZCIsImlhdCI6MTc3ODY3ODg0MywiZXhwIjoxNzc4NzY1MjQzfQ.NPtljPmQxCZ_OH3oJh5OH0_S60lAuSYU2c78krL-er4
 
 {
   "title": "Bomb site",
@@ -29,3 +29,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ
   "url": "http://kabyrra.com/bomb-site",
   "likes": 5
 }
+
+###
+
+DELETE http://localhost:3003/api/blogs/6a047cd9ba9f68387c203edf
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3YzM5YmE5ZjY4Mzg3YzIwM2VkZCIsImlhdCI6MTc3ODY3ODg0MywiZXhwIjoxNzc4NzY1MjQzfQ.NPtljPmQxCZ_OH3oJh5OH0_S60lAuSYU2c78krL-er4
