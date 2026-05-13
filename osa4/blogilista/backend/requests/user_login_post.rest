@@ -21,7 +21,7 @@ Content-Type: application/json
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3NWIzNmNmNWM0ZDFjYzM2MTY1NyIsImlhdCI6MTc3ODY3NzE3MywiZXhwIjoxNzc4NzYzNTczfQ.UzVbXbQkaZHYctyJRE5avlaswSNJBZgJHM2gMkOx1QU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3OGVjNDQ5MzBkNWNlMWVjZjA3NiIsImlhdCI6MTc3ODY3Nzk5NywiZXhwIjoxNzc4NzY0Mzk3fQ.vLy0KPRPtyE7XzelCJ7Lc-1q_tCxjfCLEjJgBal4x3Y
 
 {
   "title": "Bomb site",
