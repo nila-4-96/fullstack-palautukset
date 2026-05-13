@@ -24,7 +24,7 @@ notesRouter.post('/', async (request, response) => {
   const user = request.user
 
   if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid' })
+    return response.status(401).json({ error: 'token missing or not valid' })
   }
 
   const blog = new Blog({
@@ -55,7 +55,7 @@ notesRouter.delete('/:id', async (request, response) => {
 
   const user = request.user
 
-  if ( blog.user.toString() === user.id.toString() ) {
+  if ( blog.user.toString() === user._id.toString() ) {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   } else {

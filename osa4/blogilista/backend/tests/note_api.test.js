@@ -179,25 +179,57 @@ describe('blog error handling', () => {
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
+
+  test('blog without a token does not save', async () => {
+    const postBlog = {
+      title: 'Yet another indie site',
+      author: 'Pim',
+      url: 'https://www.merriam-webster.com/',
+      likes: 3
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(postBlog)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
 })
 
-describe('deletion of a blog', () => {
+describe('deletion of a blog', async () => {
   test('succeeds with status code 204 if id is valid', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+    const deleteBlog = {
+      title: 'Chainsaar',
+      author: 'Bungley',
+      url: 'https://www.chainsaar.com',
+      likes: 5
+    }
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    await api
+      .post('/api/blogs')
+      .send(deleteBlog)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart.find(blog => blog.title === 'Chainsaar')
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    const ids = blogsAtEnd.map(n => n.id)
-    assert(!ids.includes(blogToDelete.id))
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
   })
 })
 
 
-describe('when there is initially one user at db', () => {
+describe('creation checks', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
