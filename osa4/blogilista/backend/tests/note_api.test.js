@@ -251,6 +251,50 @@ describe('when there is initially one user at db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
+
+  test('failure if password is too short', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'abarcus',
+      name: 'Tobus',
+      password: 't',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('Password and username must be at least 3 characters long'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('failure if username is too short', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'ab',
+      name: 'Tobus',
+      password: 'tobus',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('Password and username must be at least 3 characters long'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
 })
 
 after(async () => {
