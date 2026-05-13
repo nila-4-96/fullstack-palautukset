@@ -1,8 +1,6 @@
 const notesRouter = require('express').Router()
 // const { update } = require('lodash')
 const Blog = require('../models/note')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
 
 notesRouter.get('/', async (request, response) => {
@@ -23,13 +21,7 @@ notesRouter.get('/:id', async (request, response) => {
 
 notesRouter.post('/', async (request, response) => {
   const body = request.body
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if (!user) {
     return response.status(400).json({ error: 'userId missing or not valid' })
@@ -59,15 +51,11 @@ notesRouter.post('/', async (request, response) => {
 })
 
 notesRouter.delete('/:id', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-
   const blog = await Blog.findById(request.params.id)
-  const user = await User.findById(decodedToken.id)
 
-  if ( blog.user.toString() === user._id.toString() ) {
+  const user = request.user
+
+  if ( blog.user.toString() === user.id.toString() ) {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   } else {

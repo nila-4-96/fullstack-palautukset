@@ -21,7 +21,7 @@ Content-Type: application/json
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3YzM5YmE5ZjY4Mzg3YzIwM2VkZCIsImlhdCI6MTc3ODY3ODg0MywiZXhwIjoxNzc4NzY1MjQzfQ.NPtljPmQxCZ_OH3oJh5OH0_S60lAuSYU2c78krL-er4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ4NTJmNjdlMjg0ZjM3MjQ5NmNiYyIsImlhdCI6MTc3ODY4MTgwNiwiZXhwIjoxNzc4NzY4MjA2fQ.ZG-k5mGrY6SwyOECqv_nEdwQYS3whr3eJmbynwP4xbM
 
 {
   "title": "Bomb site",
@@ -32,5 +32,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ
 
 ###
 
-DELETE http://localhost:3003/api/blogs/6a047cd9ba9f68387c203edf
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ3YzM5YmE5ZjY4Mzg3YzIwM2VkZCIsImlhdCI6MTc3ODY3ODg0MywiZXhwIjoxNzc4NzY1MjQzfQ.NPtljPmQxCZ_OH3oJh5OH0_S60lAuSYU2c78krL-er4
+DELETE http://localhost:3003/api/blogs/6a04885eac31fe9f95654b35
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZ2EiLCJpZCI6IjZhMDQ4NTJmNjdlMjg0ZjM3MjQ5NmNiYyIsImlhdCI6MTc3ODY4MTgwNiwiZXhwIjoxNzc4NzY4MjA2fQ.ZG-k5mGrY6SwyOECqv_nEdwQYS3whr3eJmbynwP4xbM
