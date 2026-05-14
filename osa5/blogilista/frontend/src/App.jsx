@@ -28,6 +28,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(user)
       blogService.setToken(user.token)
     }
@@ -64,6 +65,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+    // eslint-disable-next-line no-unused-vars
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
@@ -87,7 +89,19 @@ const App = () => {
       {!user && <LoginForm handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />}
       {user && (
         <div>
-          <p>{user.name} logged in</p>
+          <p>
+
+          {user.name} logged in
+
+          <button onClick={() => {
+            window.localStorage.removeItem(
+              'loggedBlogappUser'
+            )
+            setUser(null)
+          }}>logout</button>
+
+          </p>
+
           <BlogForm addBlog={addBlog} newBlog={newBlog} handleBlogChange={handleBlogChange} />
           {blogs.map(blog => 
             <Blog key={blog.id} blog={blog} />
