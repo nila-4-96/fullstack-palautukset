@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import Footer from './components/Footer'
 import Blog from './components/Blog'
-import Notification from './components/Notification'
+import NotificationE from './components/NotificationE'
+import NotificationS from './components/NotificationS'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import blogService from './services/notes'
@@ -12,6 +13,7 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -38,20 +40,34 @@ const App = () => {
   }, [])
 
   const addBlog = event => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-      likes: 0
-    }
+    try {
+      event.preventDefault()
+      const blogObject = {
+        title: title,
+        author: author,
+        url: url,
+        likes: 0
+      }
 
-    blogService.create(blogObject).then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-    })
+      blogService.create(blogObject).then(returnedBlog => {
+        setSuccessMessage('a new blog ' + title + ' by ' + author + ' added')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+
+        setBlogs(blogs.concat(returnedBlog))
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+      })
+
+    // eslint-disable-next-line no-unused-vars
+    } catch (exception) {
+      setErrorMessage('adding a blog failed')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
   }
 
   const handleLogin = async event => {
@@ -70,9 +86,15 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+
+      setSuccessMessage('successfully logged in, ' + user.name)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+
     // eslint-disable-next-line no-unused-vars
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -97,7 +119,8 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <NotificationE message={errorMessage} />
+      <NotificationS message={successMessage} />
 
       {!user && <LoginForm handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />}
       {user && (
@@ -111,6 +134,11 @@ const App = () => {
               'loggedBlogappUser'
             )
             setUser(null)
+            
+            setSuccessMessage('logged out')
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
           }}>logout</button>
 
           </p>
