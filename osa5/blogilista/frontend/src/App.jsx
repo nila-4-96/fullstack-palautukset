@@ -11,11 +11,14 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
 
   useEffect(() => {
@@ -37,15 +40,17 @@ const App = () => {
   const addBlog = event => {
     event.preventDefault()
     const blogObject = {
-      title: newBlog.title,
-      author: newBlog.author,
-      url: newBlog.url,
+      title: title,
+      author: author,
+      url: url,
       likes: 0
     }
 
     blogService.create(blogObject).then(returnedBlog => {
       setBlogs(blogs.concat(returnedBlog))
-      setNewBlog('')
+      setTitle('')
+      setAuthor('')
+      setUrl('')
     })
   }
 
@@ -74,8 +79,16 @@ const App = () => {
     }
   }
 
-  const handleBlogChange = event => {
-    setNewBlog(event.target.value)
+  const handleTitleChange = event => {
+    setTitle(event.target.value)
+  }
+
+  const handleAuthorChange = event => {
+    setAuthor(event.target.value)
+  }
+
+  const handleUrlChange = event => {
+    setUrl(event.target.value)
   }
 
   // const blogsToShow = showAll
@@ -102,7 +115,7 @@ const App = () => {
 
           </p>
 
-          <BlogForm addBlog={addBlog} newBlog={newBlog} handleBlogChange={handleBlogChange} />
+          <BlogForm addBlog={addBlog} title={title} author={author} url={url} handleTitleChange={handleTitleChange} handleAuthorChange={handleAuthorChange} handleUrlChange={handleUrlChange} />
           {blogs.map(blog => 
             <Blog key={blog.id} blog={blog} />
           )}
