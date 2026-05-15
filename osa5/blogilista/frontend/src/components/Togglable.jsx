@@ -17,10 +17,12 @@ const Togglable = (props) => {
   return (
     <div>
       <div style={hideWhenVisible}>
+        {/* eslint-disable-next-line react-hooks/refs */}
         <button onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
       <div style={showWhenVisible}>
 
+        {/* eslint-disable-next-line react-hooks/refs */}
         {props.children}
         <button onClick={toggleVisibility}>cancel</button>
       </div>
