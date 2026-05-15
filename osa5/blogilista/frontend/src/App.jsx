@@ -43,7 +43,31 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        setBlogs(blogs.concat({
+          id: returnedBlog.id,
+          user: user,
+          title: returnedBlog.title,
+          author: returnedBlog.author,
+          url: returnedBlog.url,
+          likes: returnedBlog.likes
+        }))
+        
+        setSuccessMessage('successfully added blog ' + returnedBlog.title + ' by ' + returnedBlog.author)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      })
+  }
+
+  const rmAppBlog = (id) => {
+    blogService
+      .rmServBlog(id)
+      .then(() => {
+        setBlogs(blogs.filter(blog => blog.id !== id))
+        setSuccessMessage('blog removed')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
       })
   }
 
@@ -118,10 +142,11 @@ const App = () => {
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
+
           
           {blogs.sort(function(a, b) {return b.likes - a.likes})
             .map(blog => 
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} user={user} rmAppBlog={rmAppBlog} />
           )}
         </div>
       )}

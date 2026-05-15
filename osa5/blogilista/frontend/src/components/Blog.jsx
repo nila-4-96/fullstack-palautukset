@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/notes'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, user, rmAppBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -33,6 +33,15 @@ const Blog = ({ blog }) => {
       .then(() => setLikes(likes + 1))
   }
 
+  const removeBlog = () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      rmAppBlog(blog.id)
+    }
+  }
+
+  // {console.log('blog.user.username:', blog.user.username)}
+  // {console.log('logged user:', JSON.parse(window.localStorage.getItem('loggedBlogappUser')).username)}
+
   return (
     <div style={blogStyle}>
       <div>
@@ -56,6 +65,11 @@ const Blog = ({ blog }) => {
           <div>
           user {blog.user.name}
           </div>
+          {blog.user.username === user.username && (
+            <div>
+              <button onClick={removeBlog}>remove</button>
+            </div>
+          )}
         </div>
       )}
     </div>
