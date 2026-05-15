@@ -10,7 +10,6 @@ import blogService from './services/notes'
 import loginService from './services/login'
 
 
-
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
@@ -20,11 +19,13 @@ const App = () => {
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
+
   useEffect(() => {
     blogService.getAll().then(initialBlogs => {
       setBlogs(initialBlogs)
     })
   }, [])
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -36,6 +37,7 @@ const App = () => {
     }
   }, [])
 
+
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
@@ -45,9 +47,9 @@ const App = () => {
       })
   }
 
+
   const handleLogin = async event => {
-    event.preventDefault()
-    
+    event.preventDefault()    
     try {
       const user = await loginService.login({ 
         username, password
@@ -89,6 +91,7 @@ const App = () => {
     </Togglable>
   )
 
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -125,7 +128,6 @@ const App = () => {
       <Footer />
     </div>
   )
-
 }
 
 export default App
