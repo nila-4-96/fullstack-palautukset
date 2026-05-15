@@ -1,14 +1,14 @@
 const loginForm = ({
-    handleLogin,
-    username,
-    password,
-    handleUsernameChange,
-    handlePasswordChange
-  }) => {
+  handleLogin,
+  username,
+  password,
+  handleUsernameChange,
+  handlePasswordChange
+}) => {
   return (
     <div>
       <h2>Login</h2>
-      
+
       <form onSubmit={handleLogin}>
         <div>
           <label>

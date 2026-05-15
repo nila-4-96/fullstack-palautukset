@@ -45,22 +45,22 @@ const Blog = ({ blog, user, rmAppBlog }) => {
   return (
     <div style={blogStyle}>
       <div>
-      {blog.title} - {blog.author}
-      <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>view</button>
-      </div>
-      <div style={showWhenVisible}>
-        <button onClick={toggleVisibility}>hide</button>
-      </div>
+        {blog.title} - {blog.author}
+        <div style={hideWhenVisible}>
+          <button onClick={toggleVisibility}>view</button>
+        </div>
+        <div style={showWhenVisible}>
+          <button onClick={toggleVisibility}>hide</button>
+        </div>
       </div>
       {visible && (
         <div>
           <div>
-          {blog.url}
+            {blog.url}
           </div>
           <div>
           likes {likes}
-          <button onClick={incLike}>like</button>
+            <button onClick={incLike}>like</button>
           </div>
           <div>
           user {blog.user.name}

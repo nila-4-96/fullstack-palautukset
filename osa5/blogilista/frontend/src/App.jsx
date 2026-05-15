@@ -17,7 +17,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
+
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const App = () => {
           url: returnedBlog.url,
           likes: returnedBlog.likes
         }))
-        
+
         setSuccessMessage('successfully added blog ' + returnedBlog.title + ' by ' + returnedBlog.author)
         setTimeout(() => {
           setSuccessMessage(null)
@@ -73,16 +73,16 @@ const App = () => {
 
 
   const handleLogin = async event => {
-    event.preventDefault()    
+    event.preventDefault()
     try {
-      const user = await loginService.login({ 
+      const user = await loginService.login({
         username, password
       })
 
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-      
+
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -126,28 +126,28 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in
-          <button onClick={() => {
-            window.localStorage.removeItem(
-              'loggedBlogappUser'
-            )
-            setUser(null)
-            
-            setSuccessMessage('logged out')
-            setTimeout(() => {
-              setSuccessMessage(null)
-            }, 5000)
-          }}>logout</button>
+            <button onClick={() => {
+              window.localStorage.removeItem(
+                'loggedBlogappUser'
+              )
+              setUser(null)
+
+              setSuccessMessage('logged out')
+              setTimeout(() => {
+                setSuccessMessage(null)
+              }, 5000)
+            }}>logout</button>
           </p>
 
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
 
-          
+
           {blogs.sort(function(a, b) {return b.likes - a.likes})
-            .map(blog => 
-            <Blog key={blog.id} blog={blog} user={user} rmAppBlog={rmAppBlog} />
-          )}
+            .map(blog =>
+              <Blog key={blog.id} blog={blog} user={user} rmAppBlog={rmAppBlog} />
+            )}
         </div>
       )}
 
