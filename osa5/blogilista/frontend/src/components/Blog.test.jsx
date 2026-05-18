@@ -1,14 +1,14 @@
 import {
   render,
-  // screen
+  screen
 } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 test('only title and author are rendered at start', async () => {
 
   const blog = {
-    title: 'Only rendered title',
+    title: 'Rendered title',
     author: 'Pim',
     url: 'gogel.co.ru.xyz'
   }
@@ -18,7 +18,7 @@ test('only title and author are rendered at start', async () => {
   const div = container.querySelector('.blog')
 
   expect(div).toHaveTextContent(
-    'Only rendered title'
+    'Rendered title'
   )
 
   expect(div).toHaveTextContent(
@@ -31,5 +31,41 @@ test('only title and author are rendered at start', async () => {
 
   expect(div).not.toHaveTextContent(
     'likes'
+  )
+})
+
+test('url, likes and user are shown when the view button is clicked', async () => {
+
+  const blog = {
+    title: 'Rendered title',
+    author: 'Pim',
+    url: 'gogel.co.ru.xyz',
+    likes: 5,
+    user: {
+      name: 'Magabur',
+      username: 'magabur'
+    }
+  }
+
+  const mockHandler = vi.fn()
+
+  const { container } = render(<Blog blog={blog} user={mockHandler} />)
+
+  const div = container.querySelector('.blog')
+
+  const userTest = userEvent.setup()
+  const button = screen.getByText('view')
+  await userTest.click(button)
+
+  expect(div).toHaveTextContent(
+    'gogel.co.ru.xyz'
+  )
+
+  expect(div).toHaveTextContent(
+    'likes 5'
+  )
+
+  expect(div).toHaveTextContent(
+    'Magabur'
   )
 })
