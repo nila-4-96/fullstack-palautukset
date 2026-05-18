@@ -43,36 +43,38 @@ const Blog = ({ blog, user, rmAppBlog }) => {
   // {console.log('logged user:', JSON.parse(window.localStorage.getItem('loggedBlogappUser')).username)}
 
   return (
-    <div style={blogStyle}>
-      <div>
-        {blog.title} - {blog.author}
-        <div style={hideWhenVisible}>
-          <button onClick={toggleVisibility}>view</button>
-        </div>
-        <div style={showWhenVisible}>
-          <button onClick={toggleVisibility}>hide</button>
-        </div>
-      </div>
-      {visible && (
+    <li className='blog'>
+      <div style={blogStyle}>
         <div>
-          <div>
-            {blog.url}
+          {blog.title} - {blog.author}
+          <div style={hideWhenVisible}>
+            <button onClick={toggleVisibility}>view</button>
           </div>
-          <div>
-          likes {likes}
-            <button onClick={incLike}>like</button>
+          <div style={showWhenVisible}>
+            <button onClick={toggleVisibility}>hide</button>
           </div>
-          <div>
-          user {blog.user.name}
-          </div>
-          {blog.user.username === user.username && (
-            <div>
-              <button onClick={removeBlog}>remove</button>
-            </div>
-          )}
         </div>
-      )}
-    </div>
+        {visible && (
+          <div>
+            <div>
+              {blog.url}
+            </div>
+            <div>
+            likes {likes}
+              <button onClick={incLike}>like</button>
+            </div>
+            <div>
+            user {blog.user.name}
+            </div>
+            {blog.user.username === user.username && (
+              <div>
+                <button onClick={removeBlog}>remove</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </li>
   )
 }
 
