@@ -41,6 +41,7 @@ test('url, likes and user are shown when the view button is clicked', async () =
     author: 'Pim',
     url: 'gogel.co.ru.xyz',
     likes: 5,
+    id: '123',
     user: {
       name: 'Magabur',
       username: 'magabur'
@@ -68,4 +69,33 @@ test('url, likes and user are shown when the view button is clicked', async () =
   expect(div).toHaveTextContent(
     'Magabur'
   )
+})
+
+test('like button can be clicked twice', async () => {
+
+  const blog = {
+    title: 'Rendered title',
+    author: 'Pim',
+    url: 'gogel.co.ru.xyz',
+    likes: 5,
+    id: '123',
+    user: {
+      name: 'Magabur',
+      username: 'magabur'
+    }
+  }
+
+  const mockHandler = vi.fn()
+
+  render(<Blog blog={blog} user={blog.user} handleLikes={mockHandler} />)
+
+  const userTest = userEvent.setup()
+  const button = screen.getByText('view')
+  await userTest.click(button)
+
+  const likeButton = screen.getByText('like')
+  await userTest.click(likeButton)
+  await userTest.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })

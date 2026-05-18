@@ -71,6 +71,32 @@ const App = () => {
       })
   }
 
+  const handleLikes = (blog) => {
+    blogService
+      .update(blog.id, {
+        user: {
+          username: blog.user.username,
+          name: blog.user.name,
+          id: blog.user.id
+        },
+        id: blog.id,
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes + 1
+      })
+      .then(updatedBlog => {
+        console.log('updatedBlog:', updatedBlog)
+        setBlogs(blogs.map(newBlog => (newBlog.id !== blog.id ? newBlog : {
+          id: updatedBlog.id,
+          user: blog.user,
+          title: updatedBlog.title,
+          author: updatedBlog.author,
+          url: updatedBlog.url,
+          likes: updatedBlog.likes
+        })))
+      })
+  }
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -146,7 +172,7 @@ const App = () => {
 
           {blogs.sort(function(a, b) {return b.likes - a.likes})
             .map(blog =>
-              <Blog key={blog.id} blog={blog} user={user} rmAppBlog={rmAppBlog} />
+              <Blog key={blog.id} blog={blog} user={user} rmAppBlog={rmAppBlog} handleLikes={handleLikes} />
             )}
         </div>
       )}

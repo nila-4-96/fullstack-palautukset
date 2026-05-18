@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/notes'
 
-const Blog = ({ blog, user, rmAppBlog }) => {
+const Blog = ({ blog, user, rmAppBlog, handleLikes }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -11,7 +11,6 @@ const Blog = ({ blog, user, rmAppBlog }) => {
   }
 
   const [visible, setVisible] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -20,18 +19,6 @@ const Blog = ({ blog, user, rmAppBlog }) => {
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
 
-  const incLike = () => {
-    console.log('like')
-    const updatedBlog = {
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: likes + 1
-    }
-
-    blogService.update(blog.id, updatedBlog)
-      .then(() => setLikes(likes + 1))
-  }
 
   const removeBlog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
@@ -60,8 +47,8 @@ const Blog = ({ blog, user, rmAppBlog }) => {
               {blog.url}
             </div>
             <div>
-            likes {likes}
-              <button onClick={incLike}>like</button>
+            likes {blog.likes}
+              <button onClick={() => handleLikes(blog)}>like</button>
             </div>
             <div>
             user {blog.user.name}
