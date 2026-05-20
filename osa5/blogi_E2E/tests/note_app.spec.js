@@ -52,12 +52,11 @@ describe('Blog app', () => {
   })
 
 
-  describe('when logged in', () => {
+  describe('When logged in', () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, 'spungley', 'wrong')
     })
 
-/*
     test('a new blog can be created', async ({ page }) => {
       await createBlog(page, {
         title: 'E2E zip bomb downloader',
@@ -67,7 +66,6 @@ describe('Blog app', () => {
 
       await expect(page.getByText('added blog E2E zip bomb downloader by Doctor Pim')).toBeVisible()
     })
-*/
 
     describe('and a blog exists', () => {
       beforeEach(async ({ page }) => {
