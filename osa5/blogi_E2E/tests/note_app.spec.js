@@ -115,16 +115,7 @@ describe('Blog app', () => {
         const removeButton = page.getByRole('button', { name: 'remove' })
         await expect(removeButton).not.toBeVisible()
       })
-
-/*
-      test('can show more info', async ({ page }) => {
-        const viewBoxes = await page.getByRole('button', { name: 'view' }).all()
-        await viewBoxes[0].click()
-        await expect(page.getByText('likes')).toBeVisible()
-      })
-*/
     })
-
     describe('and multiple blogs exist', () => {
       beforeEach(async ({ page }) => {
         await createBlog(page, {
@@ -144,19 +135,33 @@ describe('Blog app', () => {
         })
       })
 
-/*
-      test('one can be shown', async ({ page }) => {
-        const otherBlogText = page.getByText('E2E zip bomb downloader 2')
-        const otherBlogElement = otherBlogText.locator('..')
+      test('blogs are ordered by amount of likes', async ({ page }) => {
+        const fst = await page
+          .locator('div')
+          .filter({ hasText: 'E2E zip bomb downloader 1 -' }).nth(3)
+        const snd = await page
+          .locator('div')
+          .filter({ hasText: 'E2E zip bomb downloader 2 -' }).nth(3)
+        const trd = await page
+          .locator('div')
+          .filter({ hasText: 'E2E zip bomb downloader 3 -' }).nth(3)
+        
+        await fst.getByRole('button', { name: 'view' }).click()
+        await snd.getByRole('button', { name: 'view' }).click()
+        await trd.getByRole('button', { name: 'view' }).click()
 
-        await otherBlogElement
-          .getByRole('button', { name: 'view' })
-          .click()
+        await snd.getByRole('button', { name: 'like' }).click()
+        await snd.getByText('likes 1').waitFor()
+        await snd.getByRole('button', { name: 'like' }).click()
+        await snd.getByText('likes 2').waitFor()
+        await trd.getByRole('button', { name: 'like' }).click()
 
-        await expect(page.getByText('likes')).toBeVisible()
+        const seenBlogs = page.locator('.blog')
+
+        await expect(seenBlogs.nth(0)).toContainText('E2E zip bomb downloader 2')
+        await expect(seenBlogs.nth(1)).toContainText('E2E zip bomb downloader 3')
+        await expect(seenBlogs.nth(2)).toContainText('E2E zip bomb downloader 1')
       })
-*/
-      
     })
   })
 })
