@@ -33,30 +33,24 @@ describe('Blog app', () => {
     await expect(locator).toBeVisible()
   })
 
-/*
-  test('front page can be opened', async ({ page }) => {
-    const locator = page.getByText('Blogs')
-    await expect(locator).toBeVisible()
-    // await expect(page.getByText('Login')).toBeVisible()
+
+  describe('Login', () => {
+    test('succeeds with correct credentials', async ({ page }) => {
+      await loginWith(page, 'spungley', 'wrong')
+      await expect(page.getByText('successfully logged in, Bungley')).toBeVisible()
+    })
+
+
+    test('fails with wrong credentials', async ({ page }) => {
+      await loginWith(page, 'spungley', 'correct')
+
+      // await expect(page.getByText('wrong username or password')).toBeVisible()
+      const errorDiv = page.locator('.error')
+      await expect(errorDiv).toContainText('wrong username or password')
+      await expect(page.getByText('successfully logged in, Bungley')).not.toBeVisible()
+    })
   })
 
-
-  test('user can log in', async ({ page }) => {
-    await loginWith(page, 'spungley', 'wrong')
-    await expect(page.getByText('successfully logged in, Bungley')).toBeVisible()
-  })
-
-
-  test('login fails with wrong password', async ({ page }) => {
-    await loginWith(page, 'spungley', 'correct')
-
-    // await expect(page.getByText('wrong username or password')).toBeVisible()
-    const errorDiv = page.locator('.error')
-    await expect(errorDiv).toContainText('wrong username or password')
-    await expect(page.getByText('successfully logged in, Bungley')).not.toBeVisible()
-  })
-
-*/
 
   describe('when logged in', () => {
     beforeEach(async ({ page }) => {
