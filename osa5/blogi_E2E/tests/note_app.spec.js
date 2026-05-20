@@ -76,6 +76,15 @@ describe('Blog app', () => {
         })
       })
 
+      test('blog can be liked', async ({ page }) => {
+        const viewButton = page.getByRole('button', { name: 'view' })
+        await viewButton.click()
+
+        const likeButton = page.getByRole('button', { name: 'like' })
+        await likeButton.click()
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
+
 /*
       test('can show more info', async ({ page }) => {
         const viewBoxes = await page.getByRole('button', { name: 'view' }).all()
