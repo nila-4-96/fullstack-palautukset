@@ -12,6 +12,14 @@ describe('Blog app', () => {
         password: 'wrong'
       }
     })
+    
+    await request.post('/api/users', {
+      data: {
+        name: 'Bungus',
+        username: 'bung',
+        password: 'thebung'
+      }
+    })
 
     await request.post('/api/blogs', {
       data: {
@@ -93,6 +101,19 @@ describe('Blog app', () => {
         page.on('dialog', dialog => dialog.accept())
         await removeButton.click()
         await expect(page.getByText('blog removed')).toBeVisible()
+      })
+
+      test('only the blog creator can see the remove button', async ({ page }) => {
+        const logoutButton = page.getByRole('button', { name: 'logout' })
+        await logoutButton.click()
+
+        await loginWith(page, 'bung', 'thebung')
+
+        const viewButton = page.getByRole('button', { name: 'view' })
+        await viewButton.click()
+
+        const removeButton = page.getByRole('button', { name: 'remove' })
+        await expect(removeButton).not.toBeVisible()
       })
 
 /*
