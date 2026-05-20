@@ -85,6 +85,16 @@ describe('Blog app', () => {
         await expect(page.getByText('likes 1')).toBeVisible()
       })
 
+      test('blog can be removed', async ({ page }) => {
+        const viewButton = page.getByRole('button', { name: 'view' })
+        await viewButton.click()
+
+        const removeButton = page.getByRole('button', { name: 'remove' })
+        page.on('dialog', dialog => dialog.accept())
+        await removeButton.click()
+        await expect(page.getByText('blog removed')).toBeVisible()
+      })
+
 /*
       test('can show more info', async ({ page }) => {
         const viewBoxes = await page.getByRole('button', { name: 'view' }).all()
