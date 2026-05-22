@@ -1,24 +1,35 @@
 import { useState, useEffect, useRef } from 'react'
-import Footer from './components/Footer'
-import Blog from './components/Blog'
-import NotificationE from './components/NotificationE'
-import NotificationS from './components/NotificationS'
-import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import blogService from './services/notes'
 import loginService from './services/login'
+
+import {
+  Routes, Route, Link, useMatch, useNavigate
+} from 'react-router-dom'
+import Blog from './components/Blog'
+import BlogList from './components/BlogList'
+import Home from './components/Home'
+import Footer from './components/Footer'
+import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
-  const blogFormRef = useRef()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      blogService.setToken(user.token)
+    }
+  }, [])
 
   useEffect(() => {
     blogService.getAll().then(initialBlogs => {
@@ -26,49 +37,31 @@ const App = () => {
     })
   }, [])
 
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
-
-
   const addBlog = (blogObject) => {
-    blogFormRef.current.toggleVisibility()
+    // blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat({
           id: returnedBlog.id,
-          user: user,
           title: returnedBlog.title,
           author: returnedBlog.author,
           url: returnedBlog.url,
           likes: returnedBlog.likes
         }))
-
+/*
         setSuccessMessage('successfully added blog ' + returnedBlog.title + ' by ' + returnedBlog.author)
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
+        */
       })
   }
 
-  const rmAppBlog = (id) => {
-    blogService
-      .rmServBlog(id)
-      .then(() => {
-        setBlogs(blogs.filter(blog => blog.id !== id))
-        setSuccessMessage('blog removed')
-        setTimeout(() => {
-          setSuccessMessage(null)
-        }, 5000)
-      })
+  const deleteBlog = (id) => {
+    blogService.rmServBlog(id).then(() => {
+      setBlogs(blogs.filter(b => b.id !== id))
+    })
   }
 
   const handleLikes = (blog) => {
@@ -118,6 +111,7 @@ const App = () => {
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
+      navigate('/blogs')
 
     // eslint-disable-next-line no-unused-vars
     } catch (exception) {
@@ -128,54 +122,65 @@ const App = () => {
     }
   }
 
+  const padding = {
+    padding: 5
+  }
 
-  const loginForm = () => (
-    <Togglable buttonLabel="login">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleLogin={handleLogin}
-      />
-    </Togglable>
-  )
+  const match = useMatch('/blogs/:id')
+  const blog = match 
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
 
+  // console.log('blog:', blog)
 
   return (
     <div>
-      <h1>Blogs</h1>
-      <NotificationE message={errorMessage} />
-      <NotificationS message={successMessage} />
+      <div>
+        <Link style={padding} to="/">home</Link>
+        <Link style={padding} to="/blogs">blogs</Link>
+        <Link style={padding} to="/create">new blog</Link>
+        {!user && (
+          <Link style={padding} to="/login">login</Link>
+        )}
+        {user && (
+          <button onClick={() => {
+            setUser(null)
+            blogService.setToken(null)
+            window.localStorage.removeItem('loggedBlogappUser')
+            setSuccessMessage('successfully logged out')
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
+            navigate('/blogs')
+          }}>logout</button>
+        )}
+      </div>
 
-      {!user && loginForm()}
-      {user && (
-        <div>
-          <p>{user.name} logged in
-            <button onClick={() => {
-              window.localStorage.removeItem(
-                'loggedBlogappUser'
-              )
-              setUser(null)
-
-              setSuccessMessage('logged out')
-              setTimeout(() => {
-                setSuccessMessage(null)
-              }, 5000)
-            }}>logout</button>
-          </p>
-
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-
-
-          {blogs.sort(function(a, b) {return b.likes - a.likes})
-            .map(blog =>
-              <Blog key={blog.id} blog={blog} user={user} rmAppBlog={rmAppBlog} handleLikes={handleLikes} />
-            )}
-        </div>
-      )}
+      <Routes>
+        <Route path="/blogs/:id" element={
+          <Blog 
+            blog={blog}
+            deleteBlog={deleteBlog}
+            handleLikes={handleLikes}
+          />
+        } />
+        <Route path="/blogs" element={
+          <BlogList blogs={blogs} errorMessage={errorMessage} successMessage={successMessage} />
+        } />
+        <Route path="/create" element={
+          <BlogForm createBlog={addBlog} />
+        } />
+        <Route path="/login" element={
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleLogin={handleLogin}
+          />
+        } />
+        <Route path="/" element={<Home />} />
+      </Routes>
 
       <Footer />
     </div>

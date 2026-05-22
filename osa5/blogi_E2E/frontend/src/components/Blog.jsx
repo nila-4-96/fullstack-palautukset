@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import blogService from '../services/notes'
+import { useParams, useNavigate } from 'react-router-dom'
 
-const Blog = ({ blog, user, rmAppBlog, handleLikes }) => {
+const Blog = ({ blog, user, deleteBlog, handleLikes }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,19 +9,17 @@ const Blog = ({ blog, user, rmAppBlog, handleLikes }) => {
     marginBottom: 5
   }
 
-  const [visible, setVisible] = useState(false)
+  const id = useParams().id
+  const navigate = useNavigate()
 
-  const toggleVisibility = () => {
-    setVisible(!visible)
+  if(!blog) {
+    return null
   }
 
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
-
-
-  const removeBlog = () => {
+  const handleDelete = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      rmAppBlog(blog.id)
+      deleteBlog(id)
+      navigate('/blogs')
     }
   }
 
@@ -32,34 +29,13 @@ const Blog = ({ blog, user, rmAppBlog, handleLikes }) => {
   return (
     <li className='blog'>
       <div style={blogStyle}>
-        <div>
-          {blog.title} - {blog.author}
-          <div style={hideWhenVisible}>
-            <button onClick={toggleVisibility}>view</button>
-          </div>
-          <div style={showWhenVisible}>
-            <button onClick={toggleVisibility}>hide</button>
-          </div>
-        </div>
-        {visible && (
-          <div>
-            <div>
-              {blog.url}
-            </div>
-            <div>
-            likes {blog.likes}
-              <button onClick={() => handleLikes(blog)}>like</button>
-            </div>
-            <div>
-            user {blog.user.name}
-            </div>
-            {blog.user.username === user.username && (
-              <div>
-                <button onClick={removeBlog}>remove</button>
-              </div>
-            )}
-          </div>
-        )}
+        <div>{blog.title} - {blog.author}</div>
+        <div>{blog.url}</div>
+        <div>likes {blog.likes}<button onClick={() => handleLikes(blog)}>like</button></div>
+        <div>user {blog.user.name}</div>
+        <div>{blog.user.username === user.username && (
+          <button onClick={handleDelete}>remove</button>
+        )}</div>
       </div>
     </li>
   )
