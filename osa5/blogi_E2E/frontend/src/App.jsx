@@ -162,6 +162,7 @@ const App = () => {
             blog={blog}
             deleteBlog={deleteBlog}
             handleLikes={handleLikes}
+            user={user}
           />
         } />
         <Route path="/blogs" element={
