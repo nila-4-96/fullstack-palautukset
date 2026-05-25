@@ -42,13 +42,9 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat({
-          id: returnedBlog.id,
-          title: returnedBlog.title,
-          author: returnedBlog.author,
-          url: returnedBlog.url,
-          likes: returnedBlog.likes
-        }))
+        setBlogs(blogs.concat(
+          returnedBlog
+        ))
 /*
         setSuccessMessage('successfully added blog ' + returnedBlog.title + ' by ' + returnedBlog.author)
         setTimeout(() => {
@@ -138,7 +134,9 @@ const App = () => {
       <div>
         <Link style={padding} to="/">home</Link>
         <Link style={padding} to="/blogs">blogs</Link>
-        <Link style={padding} to="/create">new blog</Link>
+        {user && (
+          <Link style={padding} to="/create">new blog</Link>
+        )}
         {!user && (
           <Link style={padding} to="/login">login</Link>
         )}
