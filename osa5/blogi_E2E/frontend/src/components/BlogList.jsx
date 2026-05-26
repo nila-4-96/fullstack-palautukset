@@ -52,13 +52,6 @@ const BlogList = ({ blogs, errorMessage, successMessage }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      
-      {blogs.sort(function (a, b) { return b.likes - a.likes })
-        .map(blog => 
-          <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title} - {blog.author}</Link>
-          </li>
-      )}
     </div>
   )
 }

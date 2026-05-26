@@ -1,4 +1,5 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { Button, Typography, Card, CardActions, CardContent } from '@mui/material'
 
 const Blog = ({ blog, user, deleteBlog, handleLikes }) => {
   const blogStyle = {
@@ -27,19 +28,43 @@ const Blog = ({ blog, user, deleteBlog, handleLikes }) => {
   // {console.log('logged user:', JSON.parse(window.localStorage.getItem('loggedBlogappUser')).username)}
 
   return (
-    <li className='blog'>
+    <div className='blog'>
       <div style={blogStyle}>
-        <div>{blog.title} - {blog.author}</div>
-        <div>{blog.url}</div>
-        <div>likes {blog.likes} {blog.user && user && (
-          <button onClick={() => handleLikes(blog)}>like</button>
-        )}</div>
-        <div>user {blog.user.name}</div>
-        <div>{blog.user && user && blog.user.username === user.username && (
-          <button onClick={handleDelete}>remove</button>
-        )}</div>
+        <CardContent>
+          <Typography variant="h5" component="div">
+            {blog.title}
+          </Typography>
+          
+          <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
+            {blog.author}
+          </Typography>
+
+          <Typography variant="body2">
+            <Link to={blog.url}>{blog.url}</Link>
+          </Typography>
+
+          <Typography variant="body2">
+            user: {blog.user.name}
+          </Typography>
+
+          <Typography variant="body2">
+            likes: {blog.likes}
+          </Typography>
+        </CardContent>
+
+        <CardActions>
+          {blog.user && user && (
+            <Button color="success" variant="contained" onClick={() => handleLikes(blog)}>like</Button>
+          )}
+        </CardActions>
+
+        <CardActions>
+          {blog.user && user && blog.user.username === user.username && (
+            <Button color="error" variant="contained" onClick={handleDelete}>remove</Button>
+          )}
+        </CardActions>
       </div>
-    </li>
+    </div>
   )
 }
 
