@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { AppBar, Button, Container, Toolbar } from '@mui/material'
 import blogService from './services/notes'
 import loginService from './services/login'
 
@@ -20,6 +21,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
+
+  const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   const navigate = useNavigate()
 
@@ -137,61 +140,76 @@ const App = () => {
   // console.log('blog:', blog)
 
   return (
-    <div>
+    <Container>
       <div>
-        <Link style={padding} to="/">home</Link>
-        <Link style={padding} to="/blogs">blogs</Link>
-        {user && (
-          <Link style={padding} to="/create">new blog</Link>
-        )}
-        {!user && (
-          <Link style={padding} to="/login">login</Link>
-        )}
-        {user && (
-          <button onClick={() => {
-            setUser(null)
-            blogService.setToken(null)
-            window.localStorage.removeItem('loggedBlogappUser')
-            setSuccessMessage('successfully logged out')
-            setTimeout(() => {
-              setSuccessMessage(null)
-            }, 5000)
-            navigate('/blogs')
-          }}>logout</button>
-        )}
+        <div>
+          <AppBar position="static">
+            <Toolbar>
+            
+              <Button color="inherit" component={Link} to="/" sx={style}>home</Button>
+              
+              <Button color="inherit" component={Link} to="/blogs" sx={style}>blogs</Button>
+              
+              {user && (
+                <Button color="inherit" component={Link} to="/create" sx={style}>new blog</Button>
+              )}
+              
+              {!user && (
+                <Button color="inherit" component={Link} to="/login" sx={style}>login</Button>
+              )}
+
+              {user && (
+                <Button color="inherit" sx={style} onClick={() => {
+                  setUser(null)
+                  blogService.setToken(null)
+                  window.localStorage.removeItem('loggedBlogappUser')
+                  setSuccessMessage('successfully logged out')
+                  setTimeout(() => {
+                    setSuccessMessage(null)
+                  }, 5000)
+                  navigate('/blogs')
+                }}
+                >
+                  logout
+                </Button>
+              )}
+
+            </Toolbar>
+          </AppBar>
+        </div>
+
+        <Routes>
+          <Route path="/blogs/:id" element={
+            <Blog 
+              blog={blog}
+              deleteBlog={deleteBlog}
+              handleLikes={handleLikes}
+              user={user}
+            />
+          } />
+          <Route path="/blogs" element={
+            <BlogList blogs={blogs} errorMessage={errorMessage} successMessage={successMessage} />
+          } />
+          <Route path="/create" element={
+            <BlogForm createBlog={addBlog} />
+          } />
+          <Route path="/login" element={
+            <LoginForm
+              username={username}
+              password={password}
+              handleUsernameChange={({ target }) => setUsername(target.value)}
+              handlePasswordChange={({ target }) => setPassword(target.value)}
+              handleLogin={handleLogin}
+              errorMessage={errorMessage}
+              successMessage={successMessage}
+            />
+          } />
+          <Route path="/" element={<Home />} />
+        </Routes>
+
+        <Footer />
       </div>
-
-      <Routes>
-        <Route path="/blogs/:id" element={
-          <Blog 
-            blog={blog}
-            deleteBlog={deleteBlog}
-            handleLikes={handleLikes}
-            user={user}
-          />
-        } />
-        <Route path="/blogs" element={
-          <BlogList blogs={blogs} errorMessage={errorMessage} successMessage={successMessage} />
-        } />
-        <Route path="/create" element={
-          <BlogForm createBlog={addBlog} />
-        } />
-        <Route path="/login" element={
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleLogin={handleLogin}
-            errorMessage={errorMessage}
-            successMessage={successMessage}
-          />
-        } />
-        <Route path="/" element={<Home />} />
-      </Routes>
-
-      <Footer />
-    </div>
+    </Container>
   )
 }
 

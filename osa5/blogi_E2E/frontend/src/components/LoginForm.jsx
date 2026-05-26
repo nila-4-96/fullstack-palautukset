@@ -1,5 +1,6 @@
 import NotificationE from './NotificationE'
 import NotificationS from './NotificationS'
+import { Button, TextField } from '@mui/material'
 const LoginForm = ({
   handleLogin,
   username,
@@ -16,27 +17,23 @@ const LoginForm = ({
       <h2>Login</h2>
 
       <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            username
-            <input
-              type="text"
-              value={username}
-              onChange={handleUsernameChange}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-          </label>
-        </div>
-        <button type="submit">login</button>
+        <TextField
+          label='username'
+          value={username}
+          type="text"
+          onChange={handleUsernameChange}
+          placeholder='Username'
+        />
+        <TextField
+          label='password'
+          value={password}
+          type="password"
+          onChange={handlePasswordChange}
+          placeholder='Password'
+        />
+        <Button type="submit" variant="contained" style={{ marginTop: 10 }}>
+          login
+        </Button>
       </form>
     </div>
   )

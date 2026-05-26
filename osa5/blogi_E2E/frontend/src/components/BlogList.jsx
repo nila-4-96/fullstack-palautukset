@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import Blog from './Blog'
 import BlogForm from './BlogForm'
@@ -28,6 +29,30 @@ const BlogList = ({ blogs, errorMessage, successMessage }) => {
       <h1>Blogs</h1>
       <NotificationE message={errorMessage} />
       <NotificationS message={successMessage} />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Title</TableCell>
+              <TableCell>Author</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {blogs.sort(function (a, b) { return b.likes - a.likes })
+              .map(blog =>
+                <TableRow key={blog.id}>
+                  <TableCell>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                  </TableCell>
+                  <TableCell>
+                    {blog.author}
+                  </TableCell>
+                </TableRow>
+              )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      
       {blogs.sort(function (a, b) { return b.likes - a.likes })
         .map(blog => 
           <li key={blog.id}>
