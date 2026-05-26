@@ -45,19 +45,26 @@ const App = () => {
         setBlogs(blogs.concat(
           returnedBlog
         ))
-/*
+
         setSuccessMessage('successfully added blog ' + returnedBlog.title + ' by ' + returnedBlog.author)
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
-        */
+        
       })
   }
 
   const deleteBlog = (id) => {
-    blogService.rmServBlog(id).then(() => {
-      setBlogs(blogs.filter(b => b.id !== id))
-    })
+    blogService
+      .rmServBlog(id).then(() => {
+        setBlogs(blogs.filter(b => b.id !== id))
+      })
+      .then(() => {
+        setSuccessMessage('blog removed')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      })
   }
 
   const handleLikes = (blog) => {
@@ -176,6 +183,8 @@ const App = () => {
             handleUsernameChange={({ target }) => setUsername(target.value)}
             handlePasswordChange={({ target }) => setPassword(target.value)}
             handleLogin={handleLogin}
+            errorMessage={errorMessage}
+            successMessage={successMessage}
           />
         } />
         <Route path="/" element={<Home />} />

@@ -1,12 +1,18 @@
+import NotificationE from './NotificationE'
+import NotificationS from './NotificationS'
 const LoginForm = ({
   handleLogin,
   username,
   password,
   handleUsernameChange,
-  handlePasswordChange
+  handlePasswordChange,
+  errorMessage,
+  successMessage
 }) => {
   return (
     <div>
+      <NotificationE message={errorMessage} />
+      <NotificationS message={successMessage} />
       <h2>Login</h2>
 
       <form onSubmit={handleLogin}>
