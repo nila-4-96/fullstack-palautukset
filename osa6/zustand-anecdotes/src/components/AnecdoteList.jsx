@@ -4,10 +4,10 @@ const AnecdoteList = () => {
   const anecdotes = useAnecdotes()
   const { vote } = useAnecdoteActions()
 
-  const actVote = (id, votes) => {
-    console.log('vote', id)
-    console.log('has', votes, '+ 1 votes')
-    vote (id)
+  const actVote = (anecdote) => {
+    console.log('vote', anecdote.id)
+    console.log('has', anecdote.votes, '+ 1 votes')
+    vote (anecdote)
   }
 
   const sortedAnecdotes = anecdotes.toSorted((a, b) => b.votes - a.votes)
@@ -19,7 +19,7 @@ const AnecdoteList = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => actVote(anecdote.id, anecdote.votes)}>vote</button>
+            <button onClick={() => actVote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
