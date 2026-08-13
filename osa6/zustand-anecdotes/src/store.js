@@ -9,17 +9,12 @@ const useAnecdoteStore = create((set) => ({
       const newAnecdote = await anecdoteService.createNew(content)
       set(state => ({ anecdotes: state.anecdotes.concat(newAnecdote) }))
     },
+
     initialise: async () => {
       const anecdotes = await anecdoteService.getAll()
       set(() => ({ anecdotes }))
     },
-    /*vote: id => set(
-      state => ({ 
-        anecdotes: state.anecdotes.map(anecdote =>
-          anecdote.id === id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote
-        )
-      })
-    )*/
+
     vote: async (content) => {
       const newAnecdote = await anecdoteService.update(content.id, { ...content, votes: content.votes + 1 })
       set(state => ({
