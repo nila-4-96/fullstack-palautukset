@@ -1,7 +1,8 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import anecdoteService from './services/notes'
 
-const useAnecdoteStore = create((set) => ({
+const useAnecdoteStore = create(devtools((set, get) => ({
   anecdotes: [],
   filter: '',
   actions: {
@@ -33,7 +34,25 @@ const useAnecdoteStore = create((set) => ({
       }))
     }
   }
+})))
+
+//
+const useCounterStore = create(set => ({
+  counter: 0,
+  actions: {
+    increment: () => set(state => ({ counter: state.counter + 1 })),
+    decrement: () => set(state => ({ counter: state.counter - 1 })),
+    zero: () => set(() => ({ counter: 0 }))
+  }
 }))
+
+
+export const useCounter = () => useCounterStore(state => state.counter)
+export const useCounterControls = () => useCounterStore(state => state.actions)
+
+export default useCounterStore
+//
+
 
 export const useAnecdotes = () => {
   const anecdotes = useAnecdoteStore((state) => state.anecdotes)
