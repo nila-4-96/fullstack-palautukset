@@ -32,7 +32,9 @@ const useAnecdoteStore = create(devtools((set, get) => ({
           anecdote.id !== content.id
         )
       }))
-    }
+    },
+
+    setFilter: value => set(() => ({ filter: value }))
   }
 })))
 

@@ -62,6 +62,20 @@ describe('useAnecdoteActions', () => {
     ])
   })
 
+  it('anecdote filter works properly', async () => {
+    const mockAnecdotes = [
+      { id: 1, content: 'Anecdote 1', votes: 9 },
+      { id: 2, content: 'Anecdote 2', votes: 2 },
+      { id: 3, content: 'Anecdote 3', votes: 15 },
+    ]
+    useAnecdoteStore.setState({ anecdotes: mockAnecdotes, filter: '2' })
+
+    const { result } = renderHook(() => useAnecdotes())
+    expect(result.current).toEqual([
+      { id: 2, content: 'Anecdote 2', votes: 2 },
+    ])
+  })
+
   it('vote increments vote count', async () => {
     const anecdote = { id: 1, content: 'Test', votes: 0 }
     useAnecdoteStore.setState({ anecdotes: [anecdote] })
